@@ -1,11 +1,13 @@
 """Downloads SOVA comics using last number already downloded files."""
 
 import os
+from os.path import join
 import threading
 import subprocess
 import bs4
 import requests
 import logging
+import pretty_errors
 
 def downloadSOVAsh(startComic, endComic):
     """Загуржает комиксы в указанном диапазаоне
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     os.makedirs(resDir, exist_ok=True)
     downloadedFiles = []
 
-    logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s',
+    logging.basicConfig(level=logging.INFO, format=' %(asctime)s - %(levelname)s - %(message)s',
                         filename=join(resDir, 'logs.log'))
 
     maxI = max([int(f.split("-")[0]) for f in os.listdir(resDir) if f.endswith('.jpg')]) + 1
@@ -76,8 +78,8 @@ if __name__ == '__main__':
     # Create and start the Thread objects.
     downloadThreads = []
     lock = threading.Lock()
-    for i in range(maxI, 2 * maxI, 20):
-        downloadThread = threading.Thread(target=downloadSOVAsh, args=(i, i + 19))
+    for i in range(maxI, maxI + 20, 4):
+        downloadThread = threading.Thread(target=downloadSOVAsh, args=(i, i + 3))
         downloadThreads.append(downloadThread)
         downloadThread.start()
 
